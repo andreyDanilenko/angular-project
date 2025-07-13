@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ThemeService } from './core/services/theme.service';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
@@ -11,6 +10,5 @@ import { RouterOutlet } from '@angular/router';
   `,
 })
 export class AppComponent {
-  constructor(public themeService: ThemeService) {}
 
 }

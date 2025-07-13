@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { RouterOutlet, RouterLink } from '@angular/router';
-import { ThemeService } from '../../core/services/theme.service';
 
 @Component({
   standalone: true,
@@ -14,5 +13,4 @@ import { ThemeService } from '../../core/services/theme.service';
 })
 export class DefaultLayout {
   // Внедряем сервис через конструктор
-  constructor(public themeService: ThemeService) {}
 }

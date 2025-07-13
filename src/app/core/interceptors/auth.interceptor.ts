@@ -1,50 +1,49 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
   HttpInterceptor,
-  HttpErrorResponse,
+  HttpHandler,
+  HttpRequest,
+  HttpEvent,
+  HttpErrorResponse
 } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
-import { Router } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
 import { AuthService } from '../services/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-  private skipAuthUrls = ['/api/auth/login', '/api/auth/register'];
+export class ApiInterceptor implements HttpInterceptor {
+  private readonly isBrowser: boolean;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(platformId);
+  }
 
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (this.skipAuthCheck(request.url)) {
-      return next.handle(request);
+  intercept(
+    req: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
+    // Пропускаем запросы не к нашему API
+    if (!req.url.startsWith(environment.apiUrl)) {
+      return next.handle(req);
     }
 
-    const authReq = this.addAuthToken(request);
+    // Клонируем запрос с учетом withCredentials
+    const authReq = req.clone({
+      withCredentials: true
+    });
+
     return next.handle(authReq).pipe(
       catchError((error: HttpErrorResponse) => {
-        if (error.status === 401) {
-          this.handleUnauthorized();
+        if (error.status === 401 && this.isBrowser) {
+          this.authService.logout();
+          // Здесь можно добавить редирект на страницу логина
         }
         return throwError(() => error);
       })
     );
-  }
-
-  private skipAuthCheck(url: string): boolean {
-    return this.skipAuthUrls.some(skipUrl => url.includes(skipUrl));
-  }
-
-  private addAuthToken(request: HttpRequest<any>): HttpRequest<any> {
-    const token = this.authService.getToken();
-    return token ? request.clone({
-      setHeaders: { Authorization: `Bearer ${token}` }
-    }) : request;
-  }
-
-  private handleUnauthorized(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
   }
 }
