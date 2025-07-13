@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ApiService } from '../../core/services/api.service';
 import { CommonModule } from '@angular/common';
 
@@ -18,30 +18,35 @@ export class ArticlePage implements OnInit {
   error: string | null = null;
   data: any = null;
 
-  constructor(private api: ApiService) {}
+  constructor(
+    private api: ApiService,
+    private cdr: ChangeDetectorRef // Добавляем ChangeDetectorRef
+  ) {}
 
-  // Вариант 1: Загрузка при инициализации
   ngOnInit() {
     this.loadData();
   }
 
-  // Вариант 2: Загрузка по клику (используется в шаблоне)
   loadData() {
     console.log('Making API request...');
 
     this.loading = true;
     this.error = null;
+    this.data = null;
+    this.cdr.detectChanges(); // Принудительно запускаем обнаружение изменений
 
-    this.api.get('/article').subscribe({
-      next: (response) => {
+    this.api.get('/articles/all').subscribe({
+      next: (response: any) => {
         this.data = response;
         this.loading = false;
         console.log('API Response:', response);
+        this.cdr.detectChanges(); // Обновляем представление после получения данных
       },
-      error: (err) => {
+      error: (err: any) => {
         this.error = err.message || 'Failed to load data';
         this.loading = false;
         console.error('API Error:', err);
+        this.cdr.detectChanges(); // Обновляем представление при ошибке
       }
     });
   }

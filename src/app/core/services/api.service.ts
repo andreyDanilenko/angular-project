@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpRequest } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private readonly baseUrl = process.env['API_BASE_URL'];
+  private readonly baseUrl = environment.apiBaseUrl; // Используем Angular environment
   private readonly defaultHeaders = {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
@@ -48,8 +49,8 @@ export class ApiService {
     return this.http.request(request);
   }
 
-  delete(endpoint: string, body: any, headers?: Record<string, string>) {
-    const request = this.prepareRequest('DELETE', endpoint, body, headers);
+  delete(endpoint: string, headers?: Record<string, string>) {
+    const request = this.prepareRequest('DELETE', endpoint, null, headers);
     return this.http.request(request);
   }
 }

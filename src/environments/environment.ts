@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000/api' // или ваш dev URL
+  apiBaseUrl: 'http://localhost:8080' // или ваш dev URL
 };
