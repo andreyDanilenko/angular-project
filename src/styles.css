@@ -1,0 +1,29 @@
+/* You can add global styles to this file, and also import other style files */
+/* Светлая тема (по умолчанию) */
+:root {
+  --primary: #2563eb;
+  --background: #ffffff;
+  --text: #1f2937;
+  --card-bg: #f9fafb;
+}
+
+/* Темная тема */
+[data-theme="dark"] {
+  --primary: #3b82f6;
+  --background: #1a1a1a;
+  --text: #f3f4f6;
+  --card-bg: #2d2d2d;
+}
+
+/* Общие стили */
+body {
+  background: var(--background);
+  color: var(--text);
+  transition: background 0.3s ease;
+}
+
+.card {
+  background: var(--card-bg);
+  padding: 1rem;
+  border-radius: 8px;
+}

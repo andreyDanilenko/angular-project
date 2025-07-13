@@ -1,0 +1,5 @@
+:host { display: block; height: 100vh; }
+nav { display: flex; gap: 1rem; padding: 1rem;
+
+}
+a { text-decoration: none; }
